@@ -44,6 +44,10 @@ func resourceInventorySource() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"execution_environment_id": {
+				Type:     schema.TypeInt,
+				Optional: true,
+			},
 			"overwrite": {
 				Type:     schema.TypeBool,
 				Optional: true,
@@ -125,20 +129,21 @@ func resourceInventorySourceCreate(ctx context.Context, d *schema.ResourceData, 
 	awxService := client.InventorySourcesService
 
 	result, err := awxService.CreateInventorySource(map[string]interface{}{
-		"name":                 d.Get("name").(string),
-		"description":          d.Get("description").(string),
-		"enabled_var":          d.Get("enabled_var").(string),
-		"enabled_value":        d.Get("enabled_value").(string),
-		"overwrite":            d.Get("overwrite").(bool),
-		"overwrite_vars":       d.Get("overwrite_vars").(bool),
-		"update_on_launch":     d.Get("update_on_launch").(bool),
-		"inventory":            d.Get("inventory_id").(int),
-		"credential":           d.Get("credential_id").(int),
-		"source":               d.Get("source").(string),
-		"source_vars":          d.Get("source_vars").(string),
-		"host_filter":          d.Get("host_filter").(string),
-		"update_cache_timeout": d.Get("update_cache_timeout").(int),
-		"verbosity":            d.Get("verbosity").(int),
+		"name":                  d.Get("name").(string),
+		"description":           d.Get("description").(string),
+		"enabled_var":           d.Get("enabled_var").(string),
+		"enabled_value":         d.Get("enabled_value").(string),
+		"execution_environment": d.Get("execution_environment_id").(int),
+		"overwrite":             d.Get("overwrite").(bool),
+		"overwrite_vars":        d.Get("overwrite_vars").(bool),
+		"update_on_launch":      d.Get("update_on_launch").(bool),
+		"inventory":             d.Get("inventory_id").(int),
+		"credential":            d.Get("credential_id").(int),
+		"source":                d.Get("source").(string),
+		"source_vars":           d.Get("source_vars").(string),
+		"host_filter":           d.Get("host_filter").(string),
+		"update_cache_timeout":  d.Get("update_cache_timeout").(int),
+		"verbosity":             d.Get("verbosity").(int),
 		// obsolete schema added so terraform doesn't break
 		// these don't do anything in later versions of AWX! Update your code.
 		"source_regions":   d.Get("source_regions").(string),
@@ -165,20 +170,21 @@ func resourceInventorySourceUpdate(ctx context.Context, d *schema.ResourceData, 
 	}
 
 	_, err := awxService.UpdateInventorySource(id, map[string]interface{}{
-		"name":                 d.Get("name").(string),
-		"description":          d.Get("description").(string),
-		"enabled_var":          d.Get("enabled_var").(string),
-		"enabled_value":        d.Get("enabled_value").(string),
-		"overwrite":            d.Get("overwrite").(bool),
-		"overwrite_vars":       d.Get("overwrite_vars").(bool),
-		"update_on_launch":     d.Get("update_on_launch").(bool),
-		"inventory":            d.Get("inventory_id").(int),
-		"credential":           d.Get("credential_id").(int),
-		"source":               d.Get("source").(string),
-		"source_vars":          d.Get("source_vars").(string),
-		"host_filter":          d.Get("host_filter").(string),
-		"update_cache_timeout": d.Get("update_cache_timeout").(int),
-		"verbosity":            d.Get("verbosity").(int),
+		"name":                  d.Get("name").(string),
+		"description":           d.Get("description").(string),
+		"enabled_var":           d.Get("enabled_var").(string),
+		"enabled_value":         d.Get("enabled_value").(string),
+		"execution_environment": d.Get("execution_environment_id").(int),
+		"overwrite":             d.Get("overwrite").(bool),
+		"overwrite_vars":        d.Get("overwrite_vars").(bool),
+		"update_on_launch":      d.Get("update_on_launch").(bool),
+		"inventory":             d.Get("inventory_id").(int),
+		"credential":            d.Get("credential_id").(int),
+		"source":                d.Get("source").(string),
+		"source_vars":           d.Get("source_vars").(string),
+		"host_filter":           d.Get("host_filter").(string),
+		"update_cache_timeout":  d.Get("update_cache_timeout").(int),
+		"verbosity":             d.Get("verbosity").(int),
 		// obsolete schema added so terraform doesn't break
 		// these don't do anything in later versions of AWX! Update your code.
 		"source_regions":   d.Get("source_regions").(string),
@@ -231,6 +237,7 @@ func setInventorySourceResourceData(d *schema.ResourceData, r *awx.InventorySour
 	d.Set("description", r.Description)
 	d.Set("enabled_var", r.EnabledVar)
 	d.Set("enabled_value", r.EnabledValue)
+	d.Set("execution_environment_id", r.ExecutionEnvironment)
 	d.Set("overwrite", r.Overwrite)
 	d.Set("overwrite_vars", r.OverwriteVars)
 	d.Set("update_on_launch", r.UpdateOnLaunch)
