@@ -9,3 +9,5 @@ require (
 	github.com/veepee-oss/goawx v1.2.1
 	gopkg.in/yaml.v2 v2.4.0
 )
+
+replace github.com/veepee-oss/goawx v1.2.1 => github.com/joomcode/goawx v0.0.0-20240202180706-a60f84cf1b04
