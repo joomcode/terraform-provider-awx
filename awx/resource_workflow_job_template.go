@@ -20,9 +20,9 @@ import (
 	"log"
 	"strconv"
 
-	awx "github.com/veepee-oss/goawx/client"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	awx "github.com/veepee-oss/goawx/client"
 )
 
 func resourceWorkflowJobTemplate() *schema.Resource {
@@ -112,6 +112,11 @@ func resourceWorkflowJobTemplate() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "",
+			},
+			"role_ids": {
+				Type:     schema.TypeMap,
+				Computed: true,
+				Elem:     &schema.Schema{Type: schema.TypeInt},
 			},
 		},
 	}
@@ -250,6 +255,24 @@ func setWorkflowJobTemplateResourceData(d *schema.ResourceData, r *awx.WorkflowJ
 	d.Set("webhook_service", r.WebhookService)
 	d.Set("webhook_credential", r.WebhookCredential)
 	d.Set("variables", normalizeJsonYaml(r.ExtraVars))
+
+	if r.SummaryFields != nil && r.SummaryFields.ObjectRoles != nil {
+		or := r.SummaryFields.ObjectRoles
+		roles := map[string]int{}
+		if or.AdminRole != nil {
+			roles["admin"] = or.AdminRole.ID
+		}
+		if or.ExecuteRole != nil {
+			roles["execute"] = or.ExecuteRole.ID
+		}
+		if or.ReadRole != nil {
+			roles["read"] = or.ReadRole.ID
+		}
+		if or.ApprovalRole != nil {
+			roles["approval"] = or.ApprovalRole.ID
+		}
+		d.Set("role_ids", roles)
+	}
 
 	d.SetId(strconv.Itoa(r.ID))
 	return d
