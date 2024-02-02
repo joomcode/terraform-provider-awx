@@ -211,6 +211,11 @@ func resourceJobTemplate() *schema.Resource {
 				Optional: true,
 				Default:  "",
 			},
+			"role_ids": {
+				Type:     schema.TypeMap,
+				Computed: true,
+				Elem:     &schema.Schema{Type: schema.TypeInt},
+			},
 		},
 	}
 }
@@ -381,6 +386,23 @@ func setJobTemplateResourceData(d *schema.ResourceData, r *awx.JobTemplate) *sch
 	d.Set("start_at_task", r.StartAtTask)
 	d.Set("survey_enabled", r.SurveyEnabled)
 	d.Set("verbosity", r.Verbosity)
+	if r.SummaryFields != nil && r.SummaryFields.ObjectRoles != nil {
+		or := r.SummaryFields.ObjectRoles
+		roles := map[string]int{}
+		if or.AdminRole != nil {
+			roles["admin"] = or.AdminRole.ID
+		}
+		if or.ExecuteRole != nil {
+			roles["execute"] = or.ExecuteRole.ID
+		}
+		if or.ReadRole != nil {
+			roles["read"] = or.ReadRole.ID
+		}
+		if or.ApprovalRole != nil {
+			roles["approval"] = or.ApprovalRole.ID
+		}
+		d.Set("role_ids", roles)
+	}
 	d.SetId(strconv.Itoa(r.ID))
 	return d
 }
